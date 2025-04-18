@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gloucestershire Constabulary - Bicycle Registration & Theft Prevention</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Neubrutalism theme styling */
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: #f5f3eb;
+        }
+        .neu-box {
+            border: 3px solid #000;
+            box-shadow: 5px 5px 0px #000;
+            transition: all 0.2s ease;
+        }
+        .neu-box:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px #000;
+        }
+        .neu-button {
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+        .neu-button:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
+        }
+        .neu-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+        .neu-input {
+            border: 3px solid #000;
+            background-color: #fff;
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+        }
+        .neu-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 4px 4px 0px #3b82f6;
+        }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 0;
+            border-top: 3px solid #000;
+            border-right: 3px solid #000;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        policeblue: {
+                            light: '#4377CD',
+                            DEFAULT: '#0046AD',
+                            dark: '#002E73',
+                        },
+                        policeyellow: {
+                            DEFAULT: '#FFDA00',
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-yellow-50">
+    <!-- Navigation -->
+    <nav class="bg-policeblue text-white p-4 border-b-4 border-black">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold flex items-center">
+                <img src="https://upload.wikimedia.org/wikipedia/en/1/1d/Gloucestershire_Police_logo.png" alt="Gloucestershire Police" class="h-12 mr-3">
+                <span>Gloucestershire Constabulary</span>
+            </div>
+            <div id="nav-buttons" class="space-x-4">
+                <button onclick="showLoginForm()" class="px-4 py-2 bg-policeyellow text-black neu-button">Login</button>
+                <button onclick="showRegisterForm()" class="px-4 py-2 bg-white text-policeblue neu-button">Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto p-4">
+        <!-- Welcome Message - Shown by default -->
+        <div id="welcome-section" class="max-w-4xl mx-auto bg-white neu-box p-8 my-8">
+            <h1 class="text-3xl font-bold mb-4 border-b-4 border-black pb-2">Bicycle Theft Prevention</h1>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-xl font-bold mb-3">Protect Your Bicycle</h2>
+                    <p class="mb-4">Register your bicycle with Gloucestershire Constabulary to help prevent theft and increase chances of recovery if stolen.</p>
+                    <ul class="list-disc pl-5 mb-6 space-y-2">
+                        <li>Keep a secure record of your bike's details</li>
+                        <li>Report theft quickly and efficiently</li>
+                        <li>Track investigation progress</li>
+                        <li>Help police reduce bicycle crime</li>
+                    </ul>
+                    <div class="flex space-x-4 mt-6">
+                        <button onclick="showRegisterForm()" class="px-6 py-3 bg-policeyellow text-black neu-button">Register Now</button>
+                        <button onclick="showLoginForm()" class="px-6 py-3 bg-policeblue text-white neu-button">Login</button>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1529422643029-d4585747aaf2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Bicycle" class="w-full h-auto neu-box object-cover" style="max-height: 300px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication Forms -->
+        <div id="auth-forms" class="max-w-md mx-auto bg-white neu-box p-8 mb-8 hidden">
+            <!-- Login Form -->
+            <form id="login-form" class="hidden">
+                <h2 class="text-2xl font-bold mb-6 border-b-4 border-black pb-2">Login</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Email</label>
+                        <input type="email" id="login-email" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Password</label>
+                        <input type="password" id="login-password" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">User Type</label>
+                        <select id="login-user-type" class="w-full rounded-none neu-input">
+                            <option value="public">Public</option>
+                            <option value="police">Police</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-policeblue text-white py-3 rounded-none neu-button">Login</button>
+                    <div class="text-center">
+                        <button type="button" onclick="showRegisterForm()" class="text-policeblue underline font-bold">Need an account? Register here</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="hidden">
+                <h2 class="text-2xl font-bold mb-6 border-b-4 border-black pb-2">Register</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Full Name</label>
+                        <input type="text" id="reg-name" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Email</label>
+                        <input type="email" id="reg-email" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Password</label>
+                        <input type="password" id="reg-password" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Confirm Password</label>
+                        <input type="password" id="reg-confirm-password" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Address</label>
+                        <input type="text" id="reg-address" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Phone Number</label>
+                        <input type="tel" id="reg-phone" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <button type="submit" class="w-full bg-policeyellow text-black py-3 rounded-none neu-button">Register</button>
+                    <div class="text-center">
+                        <button type="button" onclick="showLoginForm()" class="text-policeblue underline font-bold">Already have an account? Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Public Dashboard -->
+        <div id="public-dashboard" class="hidden max-w-5xl mx-auto">
+            <div class="bg-white neu-box p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4 border-b-4 border-black pb-2">My Bicycles</h2>
+                <div class="mb-4 flex justify-between items-center">
+                    <button id="add-bike-btn" class="px-4 py-2 bg-policeyellow text-black neu-button flex items-center">
+                        <i class="bi bi-plus-circle mr-2"></i> Register New Bicycle
+                    </button>
+                    <div class="flex items-center">
+                        <span class="mr-2 font-bold">Filter:</span>
+                        <select id="bike-filter" class="neu-input">
+                            <option value="all">All Bikes</option>
+                            <option value="registered">Registered Only</option>
+                            <option value="stolen">Reported Stolen</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="user-bikes-list" class="space-y-4">
+                    <!-- Bikes will be listed here -->
+                    <p class="text-gray-500 italic">No bicycles registered yet. Click "Register New Bicycle" to add one.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bike Registration Form -->
+        <div id="bike-registration" class="hidden max-w-2xl mx-auto bg-white neu-box p-8 my-8">
+            <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-2">
+                <h2 class="text-2xl font-bold">Register Your Bicycle</h2>
+                <button id="close-bike-form" class="text-2xl hover:text-policeblue">&times;</button>
+            </div>
+            <form id="bike-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Manufacturer Part Number (MPN)</label>
+                        <input type="text" id="bike-mpn" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Brand</label>
+                        <input type="text" id="bike-brand" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Model</label>
+                        <input type="text" id="bike-model" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Type</label>
+                        <select id="bike-type" class="w-full rounded-none neu-input">
+                            <option value="">Select Type</option>
+                            <option value="electric">Electric Bike</option>
+                            <option value="mountain">Mountain Bike</option>
+                            <option value="bmx">BMX</option>
+                            <option value="road">Road Bike</option>
+                            <option value="hybrid">Hybrid Bike</option>
+                            <option value="folding">Folding Bike</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Wheel Size</label>
+                        <input type="text" id="bike-wheel-size" class="w-full rounded-none neu-input" placeholder="e.g. 26&quot;">
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Color</label>
+                        <input type="text" id="bike-color" class="w-full rounded-none neu-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Number of Gears</label>
+                        <input type="number" id="bike-gears" class="w-full rounded-none neu-input" min="1" max="30">
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Brake Type</label>
+                        <select id="bike-brake-type" class="w-full rounded-none neu-input">
+                            <option value="">Select Brake Type</option>
+                            <option value="v-brakes">Direct-Linear Pull (V-Brakes)</option>
+                            <option value="hydraulic">Hydraulic Rim Brakes</option>
+                            <option value="disc">Disc Brakes</option>
+                            <option value="coaster">Coaster Brakes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Suspension</label>
+                        <select id="bike-suspension" class="w-full rounded-none neu-input">
+                            <option value="">Select Suspension</option>
+                            <option value="front">Front Only</option>
+                            <option value="full">Full Suspension</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Gender</label>
+                        <select id="bike-gender" class="w-full rounded-none neu-input">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="unisex">Unisex</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Age Group</label>
+                        <select id="bike-age" class="w-full rounded-none neu-input">
+                            <option value="">Select Age Group</option>
+                            <option value="adult">Adult</option>
+                            <option value="child">Child</option>
+                            <option value="8-10">8-10 years</option>
+                            <option value="10-12">10-12 years</option>
+                            <option value="12+">12+ years</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-black mb-2 font-bold">Purchase Date</label>
+                        <input type="date" id="bike-purchase-date" class="w-full rounded-none neu-input">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-black mb-2 font-bold">Bicycle Images (Front, Side, Serial Number)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="neu-box p-2 text-center">
+                            <div id="front-preview" class="w-full h-32 bg-gray-100 mb-2 flex items-center justify-center text-gray-400">
+                                Front View
+                            </div>
+                            <input type="file" id="bike-image-front" class="w-full" accept="image/*" onchange="previewImage(this, 'front-preview')">
+                        </div>
+                        <div class="neu-box p-2 text-center">
+                            <div id="side-preview" class="w-full h-32 bg-gray-100 mb-2 flex items-center justify-center text-gray-400">
+                                Side View
+                            </div>
+                            <input type="file" id="bike-image-side" class="w-full" accept="image/*" onchange="previewImage(this, 'side-preview')">
+                        </div>
+                        <div class="neu-box p-2 text-center">
+                            <div id="serial-preview" class="w-full h-32 bg-gray-100 mb-2 flex items-center justify-center text-gray-400">
+                                Serial Number
+                            </div>
+                            <input type="file" id="bike-image-serial" class="w-full" accept="image/*" onchange="previewImage(this, 'serial-preview')">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-policeyellow text-black py-3 rounded-none neu-button">Register Bicycle</button>
+            </form>
+        </div>
+
+        <!-- Report Stolen Bike Form -->
+        <div id="report-stolen-form" class="hidden max-w-2xl mx-auto bg-white neu-box p-8 my-8">
+            <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-2">
+                <h2 class="text-2xl font-bold">Report Stolen Bicycle</h2>
+                <button id="close-report-form" class="text-2xl hover:text-policeblue">&times;</button>
+            </div>
+            <form id="stolen-bike-form" class="space-y-6">
+                <input type="hidden" id="stolen-bike-id">
+                <div>
+                    <p class="font-bold mb-2">Bicycle Details:</p>
+                    <div id="stolen-bike-details" class="bg-gray-50 p-4 neu-box mb-4">
+                        <!-- Bike details will be filled here -->
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Date of Theft</label>
+                    <input type="date" id="theft-date" class="w-full rounded-none neu-input" required>
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Approximate Time</label>
+                    <input type="time" id="theft-time" class="w-full rounded-none neu-input" required>
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Location of Theft</label>
+                    <input type="text" id="theft-location" class="w-full rounded-none neu-input" required placeholder="Street, City, Postcode">
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Description of Incident</label>
+                    <textarea id="theft-description" rows="4" class="w-full rounded-none neu-input" required placeholder="Please provide as much detail as possible about the theft"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-none neu-button">Report Stolen</button>
+            </form>
+        </div>
+
+        <!-- View Bike Status Dialog -->
+        <div id="bike-status-dialog" class="hidden max-w-2xl mx-auto bg-white neu-box p-8 my-8">
+            <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-2">
+                <h2 class="text-2xl font-bold">Investigation Status</h2>
+                <button id="close-status-dialog" class="text-2xl hover:text-policeblue">&times;</button>
+            </div>
+            <div id="bike-status-content" class="space-y-4">
+                <!-- Status content will be filled here -->
+            </div>
+        </div>
+
+        <!-- Police Dashboard -->
+        <div id="police-dashboard" class="hidden max-w-5xl mx-auto">
+            <div class="bg-white neu-box p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4 border-b-4 border-black pb-2">Police Dashboard</h2>
+                
+                <!-- Admin Section for Police -->
+                <div id="police-admin-section" class="hidden mb-8">
+                    <h3 class="text-xl font-bold mb-3">Admin Controls</h3>
+                    <button id="enroll-officer-btn" class="px-4 py-2 bg-policeblue text-white neu-button mb-4">
+                        <i class="bi bi-person-plus mr-2"></i> Enroll New Police Officer
+                    </button>
+                    <div id="enroll-officer-form" class="hidden bg-gray-50 p-4 neu-box mb-4">
+                        <h4 class="font-bold mb-3">Enroll New Officer</h4>
+                        <form id="new-officer-form" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-black mb-1 font-bold">Officer Name</label>
+                                    <input type="text" id="officer-name" class="w-full rounded-none neu-input" required>
+                                </div>
+                                <div>
+                                    <label class="block text-black mb-1 font-bold">Badge Number</label>
+                                    <input type="text" id="officer-badge" class="w-full rounded-none neu-input" required>
+                                </div>
+                                <div>
+                                    <label class="block text-black mb-1 font-bold">Email</label>
+                                    <input type="email" id="officer-email" class="w-full rounded-none neu-input" required>
+                                </div>
+                                <div>
+                                    <label class="block text-black mb-1 font-bold">Password</label>
+                                    <input type="password" id="officer-password" class="w-full rounded-none neu-input" required>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-4 py-2 bg-policeblue text-white neu-button">Create Account</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Stolen Bikes Report Section -->
+                <div>
+                    <h3 class="text-xl font-bold mb-3">Stolen Bicycles Reports</h3>
+                    <div class="flex space-x-4 mb-4">
+                        <button onclick="showStolenBikes('week')" class="px-4 py-2 bg-policeblue text-white neu-button">This Week</button>
+                        <button onclick="showStolenBikes('month')" class="px-4 py-2 bg-policeblue text-white neu-button">This Month</button>
+                        <button onclick="showStolenBikes('year')" class="px-4 py-2 bg-policeblue text-white neu-button">This Year</button>
+                    </div>
+                    <div id="stolen-bikes-list" class="space-y-4">
+                        <div class="loader mx-auto"></div>
+                        <!-- Stolen bikes will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Update Investigation Status Dialog -->
+        <div id="update-status-dialog" class="hidden max-w-2xl mx-auto bg-white neu-box p-8 my-8">
+            <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-2">
+                <h2 class="text-2xl font-bold">Update Investigation Status</h2>
+                <button id="close-update-dialog" class="text-2xl hover:text-policeblue">&times;</button>
+            </div>
+            <form id="update-status-form" class="space-y-6">
+                <input type="hidden" id="update-bike-id">
+                <div id="update-bike-details" class="bg-gray-50 p-4 neu-box mb-4">
+                    <!-- Bike details will be filled here -->
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Current Status</label>
+                    <div id="current-status" class="bg-gray-50 p-3 neu-box mb-4"></div>
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Update Status</label>
+                    <select id="new-status" class="w-full rounded-none neu-input">
+                        <option value="investigating">Under Investigation</option>
+                        <option value="leads">Following Leads</option>
+                        <option value="identified">Suspect Identified</option>
+                        <option value="recovered">Bicycle Recovered</option>
+                        <option value="closed">Case Closed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-black mb-2 font-bold">Investigation Notes</label>
+                    <textarea id="investigation-notes" rows="4" class="w-full rounded-none neu-input" placeholder="Add notes about the investigation progress"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-policeblue text-white py-3 rounded-none neu-button">Update Status</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // MongoDB App Slug
+        const APP_SLUG = 'bike-registry-123456';
+        
+        // User data and current state
+        let currentUser = null;
+        let userBikes = [];
+        let isAdmin = false;
+
+        // DOM Content Loaded Event
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize event listeners for close buttons
+            document.getElementById('close-bike-form').addEventListener('click', function() {
+                document.getElementById('bike-registration').classList.add('hidden');
+                if (currentUser) document.getElementById('public-dashboard').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-report-form').addEventListener('click', function() {
+                document.getElementById('report-stolen-form').classList.add('hidden');
+                document.getElementById('public-dashboard').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-status-dialog').addEventListener('click', function() {
+                document.getElementById('bike-status-dialog').classList.add('hidden');
+                document.getElementById('public-dashboard').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-update-dialog').addEventListener('click', function() {
+                document.getElementById('update-status-dialog').classList.add('hidden');
+                document.getElementById('police-dashboard').classList.remove('hidden');
+            });
+            
+            // Add bike button
+            document.getElementById('add-bike-btn').addEventListener('click', function() {
+                document.getElementById('public-dashboard').classList.add('hidden');
+                document.getElementById('bike-registration').classList.remove('hidden');
+                document.getElementById('bike-form').reset();
+            });
+            
+            // Enroll officer toggle button
+            document.getElementById('enroll-officer-btn').addEventListener('click', function() {
+                const form = document.getElementById('enroll-officer-form');
+                form.classList.toggle('hidden');
+            });
+            
+            // New officer form submission
+            document.getElementById('new-officer-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                enrollNewOfficer();
+            });
+            
+            // Bike filter dropdown change
+            document.getElementById('bike-filter').addEventListener('change', function() {
+                updateBikesDisplay();
+            });
+            
+            // Initialize event listeners for forms
+            setupForms();
+        });
+
+        // Show/Hide Forms
+        function showLoginForm() {
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('auth-forms').classList.remove('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('bike-registration').classList.add('hidden');
+            document.getElementById('police-dashboard').classList.add('hidden');
+            document.getElementById('public-dashboard').classList.add('hidden');
+        }
+
+        function showRegisterForm() {
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('auth-forms').classList.remove('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('bike-registration').classList.add('hidden');
+            document.getElementById('police-dashboard').classList.add('hidden');
+            document.getElementById('public-dashboard').classList.add('hidden');
+        }
+
+        // Setup form event listeners
+        function setupForms() {
+            // Login Form
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await login();
+            });
+
+            // Register Form
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await register();
+            });
+
+            // Bike Registration Form
+            document.getElementById('bike-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await registerBike();
+            });
+            
+            // Report Stolen Bike Form
+            document.getElementById('stolen-bike-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await reportStolen();
+            });
+            
+            // Update Status Form
+            document.getElementById('update-status-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await updateInvestigationStatus();
+            });
+        }
+        
+        // Image preview for bike registration
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="h-full w-full object-cover">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Handle Login
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const userType = document.getElementById('login-user-type').value;
+            
+            // Mock authentication - in a real app this would check against the database
+            try {
+                // Simulate API call for authentication
+                currentUser = {
+                    email: email,
+                    userType: userType,
+                    name: email.split('@')[0]
+                };
+                
+                document.getElementById('auth-forms').classList.add('hidden');
+                
+                if (userType === 'public') {
+                    // For public users, show their dashboard with registered bikes
+                    document.getElementById('public-dashboard').classList.remove('hidden');
+                    await loadUserBikes();
+                } else {
+                    // For police users, show the police dashboard
+                    document.getElementById('police-dashboard').classList.remove('hidden');
+                    
+                    // Check if admin (for demo, we'll make any police user with "admin" in email an admin)
+                    isAdmin = email.includes('admin');
+                    if (isAdmin) {
+                        document.getElementById('police-admin-section').classList.remove('hidden');
+                    }
+                    
+                    // Load stolen bikes for the current week by default
+                    showStolenBikes('week');
+                }
+                
+                // Update navigation buttons
+                document.getElementById('nav-buttons').innerHTML = `
+                    <span class="px-4 py-2 font-bold">Welcome, ${currentUser.name}</span>
+                    <button onclick="logout()" class="px-4 py-2 bg-policeyellow text-black neu-button">Logout</button>
+                `;
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('Login failed. Please try again.');
+            }
+        }
+
+        // Handle User Registration
+        async function register() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            
+            // Validate password match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            try {
+                // Simulate API call for registration
+                const userData = {
+                    name: name,
+                    email: email,
+                    address: document.getElementById('reg-address').value,
+                    phone: document.getElementById('reg-phone').value,
+                    userType: 'public'
+                };
+                
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'create',
+                        collection: 'users',
+                        data: userData
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Registration successful! Please log in.');
+                    document.getElementById('register-form').reset();
+                    showLoginForm();
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                alert('Registration failed. Please try again.');
+            }
+        }
+
+        // Handle Bike Registration
+        async function registerBike() {
+            if (!currentUser) {
+                alert('You must be logged in to register a bicycle.');
+                return;
+            }
+            
+            try {
+                // Collect bike data from the form
+                const bikeData = {
+                    owner: currentUser.email,
+                    mpn: document.getElementById('bike-mpn').value,
+                    brand: document.getElementById('bike-brand').value,
+                    model: document.getElementById('bike-model').value,
+                    type: document.getElementById('bike-type').value,
+                    wheelSize: document.getElementById('bike-wheel-size').value,
+                    color: document.getElementById('bike-color').value,
+                    gears: document.getElementById('bike-gears').value,
+                    brakeType: document.getElementById('bike-brake-type').value,
+                    suspension: document.getElementById('bike-suspension').value,
+                    gender: document.getElementById('bike-gender').value,
+                    ageGroup: document.getElementById('bike-age').value,
+                    purchaseDate: document.getElementById('bike-purchase-date').value,
+                    status: 'registered',
+                    registrationDate: new Date().toISOString(),
+                    // In a real app, we would upload images to storage and save URLs here
+                    images: {
+                        front: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890',
+                        side: 'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8',
+                        serial: 'https://images.unsplash.com/photo-1511994298241-608e28f14fde'
+                    }
+                };
+                
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'create',
+                        collection: 'bikes',
+                        data: bikeData
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Bicycle registered successfully!');
+                    document.getElementById('bike-form').reset();
+                    document.getElementById('bike-registration').classList.add('hidden');
+                    document.getElementById('public-dashboard').classList.remove('hidden');
+                    await loadUserBikes();
+                }
+            } catch (error) {
+                console.error('Error registering bicycle:', error);
+                alert('Failed to register bicycle. Please try again.');
+            }
+        }
+        
+        // Report a bike as stolen
+        async function reportStolen() {
+            const bikeId = document.getElementById('stolen-bike-id').value;
+            if (!bikeId) {
+                alert('Error: No bicycle selected.');
+                return;
+            }
+            
+            try {
+                const theftData = {
+                    bikeId: bikeId,
+                    theftDate: document.getElementById('theft-date').value,
+                    theftTime: document.getElementById('theft-time').value,
+                    location: document.getElementById('theft-location').value,
+                    description: document.getElementById('theft-description').value,
+                    reportedBy: currentUser.email,
+                    reportDate: new Date().toISOString(),
+                    status: 'reported',
+                    timeFrame: determineTimeFrame(document.getElementById('theft-date').value)
+                };
+                
+                // Create theft report
+                const reportResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'create',
+                        collection: 'stolen_bikes',
+                        data: theftData
+                    })
+                });
+                
+                // Update bike status to stolen
+                const updateResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'update',
+                        collection: 'bikes',
+                        id: bikeId,
+                        data: {
+                            status: 'stolen',
+                            stolenDate: theftData.theftDate
+                        }
+                    })
+                });
+                
+                const reportResult = await reportResponse.json();
+                const updateResult = await updateResponse.json();
+                
+                if (reportResult.success && updateResult.success) {
+                    alert('Theft reported successfully. The police have been notified.');
+                    document.getElementById('stolen-bike-form').reset();
+                    document.getElementById('report-stolen-form').classList.add('hidden');
+                    document.getElementById('public-dashboard').classList.remove('hidden');
+                    await loadUserBikes();
+                }
+            } catch (error) {
+                console.error('Error reporting theft:', error);
+                alert('Failed to report theft. Please try again.');
+            }
+        }
+        
+        // Update investigation status by police
+        async function updateInvestigationStatus() {
+            const bikeId = document.getElementById('update-bike-id').value;
+            const newStatus = document.getElementById('new-status').value;
+            const notes = document.getElementById('investigation-notes').value;
+            
+            try {
+                // Find the theft report for this bike
+                const findResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'stolen_bikes',
+                        conditions: { bikeId: bikeId }
+                    })
+                });
+                
+                const findResult = await findResponse.json();
+                
+                if (findResult.success && findResult.result.read.length > 0) {
+                    const theftReport = findResult.result.read[0];
+                    
+                    // Update the theft report status
+                    const updateResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            appSlug: APP_SLUG,
+                            action: 'update',
+                            collection: 'stolen_bikes',
+                            id: theftReport._id,
+                            data: {
+                                status: newStatus,
+                                lastUpdated: new Date().toISOString(),
+                                updatedBy: currentUser.email,
+                                notes: notes
+                            }
+                        })
+                    });
+                    
+                    // If bike is recovered, update the bike status
+                    if (newStatus === 'recovered') {
+                        const bikeUpdateResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                appSlug: APP_SLUG,
+                                action: 'update',
+                                collection: 'bikes',
+                                id: bikeId,
+                                data: {
+                                    status: 'recovered',
+                                    recoveryDate: new Date().toISOString()
+                                }
+                            })
+                        });
+                    }
+                    
+                    const updateResult = await updateResponse.json();
+                    
+                    if (updateResult.success) {
+                        alert('Investigation status updated successfully.');
+                        document.getElementById('update-status-form').reset();
+                        document.getElementById('update-status-dialog').classList.add('hidden');
+                        document.getElementById('police-dashboard').classList.remove('hidden');
+                        showStolenBikes('week'); // Refresh the list
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating investigation status:', error);
+                alert('Failed to update status. Please try again.');
+            }
+        }
+        
+        // Enroll a new police officer (admin function)
+        async function enrollNewOfficer() {
+            if (!isAdmin) {
+                alert('Only admin officers can enroll new officers.');
+                return;
+            }
+            
+            try {
+                const officerData = {
+                    name: document.getElementById('officer-name').value,
+                    badgeNumber: document.getElementById('officer-badge').value,
+                    email: document.getElementById('officer-email').value,
+                    userType: 'police',
+                    enrolledBy: currentUser.email,
+                    enrollDate: new Date().toISOString()
+                };
+                
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'create',
+                        collection: 'users',
+                        data: officerData
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert(`Officer ${officerData.name} has been successfully enrolled.`);
+                    document.getElementById('new-officer-form').reset();
+                    document.getElementById('enroll-officer-form').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error enrolling officer:', error);
+                alert('Failed to enroll officer. Please try again.');
+            }
+        }
+        
+        // Load registered bikes for the current user
+        async function loadUserBikes() {
+            if (!currentUser) return;
+            
+            try {
+                const loader = document.createElement('div');
+                loader.className = 'loader mx-auto';
+                loader.style.display = 'block';
+                document.getElementById('user-bikes-list').innerHTML = '';
+                document.getElementById('user-bikes-list').appendChild(loader);
+                
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'bikes',
+                        conditions: { owner: currentUser.email }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    userBikes = result.result.read;
+                    updateBikesDisplay();
+                } else {
+                    document.getElementById('user-bikes-list').innerHTML = '<p>No bicycles found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading bicycles:', error);
+                document.getElementById('user-bikes-list').innerHTML = '<p>Error loading bicycles. Please try again.</p>';
+            }
+        }
+        
+        // Update bikes display based on filter
+        function updateBikesDisplay() {
+            const bikesList = document.getElementById('user-bikes-list');
+            const filter = document.getElementById('bike-filter').value;
+            
+            if (userBikes.length === 0) {
+                bikesList.innerHTML = '<p class="text-gray-500 italic">No bicycles registered yet. Click "Register New Bicycle" to add one.</p>';
+                return;
+            }
+            
+            let filteredBikes = userBikes;
+            
+            if (filter === 'registered') {
+                filteredBikes = userBikes.filter(bike => bike.status === 'registered');
+            } else if (filter === 'stolen') {
+                filteredBikes = userBikes.filter(bike => bike.status === 'stolen');
+            }
+            
+            if (filteredBikes.length === 0) {
+                bikesList.innerHTML = `<p class="text-gray-500 italic">No bicycles found matching the "${filter}" filter.</p>`;
+                return;
+            }
+            
+            bikesList.innerHTML = filteredBikes.map(bike => `
+                <div class="neu-box p-4 bg-white">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-1">
+                            <img src="${bike.images?.front || 'https://images.unsplash.com/photo-1571068316344-75bc76f77890'}" 
+                                alt="${bike.brand} ${bike.model}" 
+                                class="w-full h-40 object-cover neu-box">
+                        </div>
+                        <div class="md:col-span-3">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-bold">${bike.brand} ${bike.model}</h3>
+                                <span class="px-3 py-1 text-sm ${getBikeStatusColor(bike.status)}">${formatBikeStatus(bike.status)}</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                                <p><span class="font-bold">MPN:</span> ${bike.mpn}</p>
+                                <p><span class="font-bold">Color:</span> ${bike.color}</p>
+                                <p><span class="font-bold">Type:</span> ${bike.type || 'Not specified'}</p>
+                                <p><span class="font-bold">Wheel:</span> ${bike.wheelSize || 'Not specified'}</p>
+                            </div>
+                            <div class="flex space-x-3 mt-4">
+                                <button onclick="viewDetails('${bike._id}')" class="px-3 py-1 bg-policeyellow text-black neu-button text-sm">
+                                    <i class="bi bi-info-circle mr-1"></i> Details
+                                </button>
+                                ${bike.status === 'registered' ? `
+                                    <button onclick="showReportStolenForm('${bike._id}')" class="px-3 py-1 bg-red-600 text-white neu-button text-sm">
+                                        <i class="bi bi-exclamation-triangle mr-1"></i> Report Stolen
+                                    </button>
+                                ` : bike.status === 'stolen' ? `
+                                    <button onclick="viewStatus('${bike._id}')" class="px-3 py-1 bg-policeblue text-white neu-button text-sm">
+                                        <i class="bi bi-search mr-1"></i> View Status
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Get color class for bike status
+        function getBikeStatusColor(status) {
+            switch(status) {
+                case 'registered': return 'bg-green-100 text-green-800 border border-green-200';
+                case 'stolen': return 'bg-red-100 text-red-800 border border-red-200';
+                case 'recovered': return 'bg-blue-100 text-blue-800 border border-blue-200';
+                default: return 'bg-gray-100 text-gray-800 border border-gray-200';
+            }
+        }
+        
+        // Format bike status for display
+        function formatBikeStatus(status) {
+            switch(status) {
+                case 'registered': return 'Registered';
+                case 'stolen': return 'Reported Stolen';
+                case 'recovered': return 'Recovered';
+                default: return status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        // Show form to report bike as stolen
+        function showReportStolenForm(bikeId) {
+            const bike = userBikes.find(b => b._id === bikeId);
+            if (!bike) return;
+            
+            document.getElementById('public-dashboard').classList.add('hidden');
+            document.getElementById('report-stolen-form').classList.remove('hidden');
+            
+            document.getElementById('stolen-bike-id').value = bikeId;
+            document.getElementById('stolen-bike-details').innerHTML = `
+                <div class="grid grid-cols-1 gap-2">
+                    <h3 class="text-lg font-bold">${bike.brand} ${bike.model}</h3>
+                    <p><span class="font-bold">MPN:</span> ${bike.mpn}</p>
+                    <p><span class="font-bold">Type:</span> ${bike.type || 'Not specified'}</p>
+                    <p><span class="font-bold">Color:</span> ${bike.color}</p>
+                </div>
+            `;
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('theft-date').value = today;
+        }
+        
+        // View bike status for a stolen bike
+        async function viewStatus(bikeId) {
+            try {
+                // Find theft report for this bike
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'stolen_bikes',
+                        conditions: { bikeId: bikeId }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.result.read.length > 0) {
+                    const theftReport = result.result.read[0];
+                    const bike = userBikes.find(b => b._id === bikeId);
+                    
+                    document.getElementById('public-dashboard').classList.add('hidden');
+                    document.getElementById('bike-status-dialog').classList.remove('hidden');
+                    
+                    const statusContent = document.getElementById('bike-status-content');
+                    statusContent.innerHTML = `
+                        <div class="bg-gray-50 p-4 neu-box mb-4">
+                            <h3 class="text-lg font-bold">${bike.brand} ${bike.model}</h3>
+                            <p><span class="font-bold">MPN:</span> ${bike.mpn}</p>
+                            <p><span class="font-bold">Color:</span> ${bike.color}</p>
+                            <p><span class="font-bold">Reported on:</span> ${formatDate(theftReport.reportDate)}</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h3 class="font-bold mb-2">Current Status:</h3>
+                            <div class="py-2 px-4 ${getInvestigationStatusColor(theftReport.status)} mb-4">
+                                ${formatInvestigationStatus(theftReport.status)}
+                            </div>
+                            
+                            ${theftReport.notes ? `
+                                <h3 class="font-bold mb-2">Investigation Notes:</h3>
+                                <div class="bg-gray-50 p-4 neu-box mb-4">
+                                    ${theftReport.notes}
+                                </div>
+                            ` : ''}
+                            
+                            <h3 class="font-bold mb-2">Case Timeline:</h3>
+                            <div class="space-y-4">
+                                <div class="flex">
+                                    <div class="w-6 h-6 bg-policeyellow rounded-full mr-4 mt-1"></div>
+                                    <div>
+                                        <h4 class="font-bold">Reported</h4>
+                                        <p>${formatDate(theftReport.reportDate)}</p>
+                                    </div>
+                                </div>
+                                
+                                ${theftReport.lastUpdated ? `
+                                    <div class="flex">
+                                        <div class="w-6 h-6 bg-policeblue rounded-full mr-4 mt-1"></div>
+                                        <div>
+                                            <h4 class="font-bold">Status Updated</h4>
+                                            <p>${formatDate(theftReport.lastUpdated)}</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${theftReport.status === 'recovered' ? `
+                                    <div class="flex">
+                                        <div class="w-6 h-6 bg-green-500 rounded-full mr-4 mt-1"></div>
+                                        <div>
+                                            <h4 class="font-bold">Recovered</h4>
+                                            <p>${bike.recoveryDate ? formatDate(bike.recoveryDate) : 'Date not recorded'}</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${theftReport.status === 'closed' ? `
+                                    <div class="flex">
+                                        <div class="w-6 h-6 bg-gray-500 rounded-full mr-4 mt-1"></div>
+                                        <div>
+                                            <h4 class="font-bold">Case Closed</h4>
+                                            <p>${theftReport.lastUpdated ? formatDate(theftReport.lastUpdated) : 'Date not recorded'}</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <p class="mt-6 text-gray-600">For any questions about this case, please contact the Gloucestershire Constabulary on 101 and quote reference: ${theftReport._id.substring(0, 8).toUpperCase()}</p>
+                    `;
+                } else {
+                    alert('No theft report found for this bicycle.');
+                }
+            } catch (error) {
+                console.error('Error fetching status:', error);
+                alert('Failed to fetch status. Please try again.');
+            }
+        }
+        
+        // Show stolen bikes for police dashboard
+        async function showStolenBikes(timeFrame) {
+            const stolenBikesList = document.getElementById('stolen-bikes-list');
+            stolenBikesList.innerHTML = '';
+            const loader = document.createElement('div');
+            loader.className = 'loader mx-auto';
+            loader.style.display = 'block';
+            stolenBikesList.appendChild(loader);
+            
+            try {
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'stolen_bikes',
+                        conditions: { timeFrame: timeFrame }
+                    })
+                });
+                
+                const result = await response.json();
+                loader.style.display = 'none';
+                
+                if (result.success) {
+                    const theftReports = result.result.read;
+                    
+                    if (theftReports.length === 0) {
+                        stolenBikesList.innerHTML = `<p class="text-gray-500 italic">No stolen bicycles reported for this time period.</p>`;
+                        return;
+                    }
+                    
+                    // For each theft report, get the associated bike details
+                    const bikePromises = theftReports.map(report => 
+                        fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                appSlug: APP_SLUG,
+                                action: 'read',
+                                collection: 'bikes',
+                                id: report.bikeId
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success && data.result.read.length > 0) {
+                                return { bike: data.result.read[0], report };
+                            }
+                            return null;
+                        })
+                    );
+                    
+                    const bikeResults = await Promise.all(bikePromises);
+                    const validResults = bikeResults.filter(result => result !== null);
+                    
+                    stolenBikesList.innerHTML = validResults.map(({ bike, report }) => `
+                        <div class="neu-box p-4 bg-white">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="md:col-span-1">
+                                    <img src="${bike.images?.front || 'https://images.unsplash.com/photo-1571068316344-75bc76f77890'}" 
+                                        alt="${bike.brand} ${bike.model}" 
+                                        class="w-full h-40 object-cover neu-box">
+                                </div>
+                                <div class="md:col-span-3">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-xl font-bold">${bike.brand} ${bike.model}</h3>
+                                        <span class="px-3 py-1 text-sm ${getInvestigationStatusColor(report.status)}">${formatInvestigationStatus(report.status)}</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                        <p><span class="font-bold">MPN:</span> ${bike.mpn}</p>
+                                        <p><span class="font-bold">Color:</span> ${bike.color}</p>
+                                        <p><span class="font-bold">Type:</span> ${bike.type || 'Not specified'}</p>
+                                        <p><span class="font-bold">Theft Date:</span> ${formatDate(report.theftDate)}</p>
+                                        <p><span class="font-bold">Location:</span> ${report.location || 'Not specified'}</p>
+                                        <p><span class="font-bold">Reported By:</span> ${report.reportedBy.split('@')[0]}</p>
+                                    </div>
+                                    <div class="flex space-x-3 mt-4">
+                                        <button onclick="viewTheftDetails('${report._id}')" class="px-3 py-1 bg-policeyellow text-black neu-button text-sm">
+                                            <i class="bi bi-file-text mr-1"></i> Case Details
+                                        </button>
+                                        <button onclick="showUpdateStatusForm('${bike._id}', '${report._id}', '${report.status}')" class="px-3 py-1 bg-policeblue text-white neu-button text-sm">
+                                            <i class="bi bi-pencil-square mr-1"></i> Update Status
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error fetching stolen bikes:', error);
+                loader.style.display = 'none';
+                stolenBikesList.innerHTML = '<p class="text-red-500">Failed to load stolen bikes. Please try again.</p>';
+            }
+        }
+        
+        // View theft report details (for police)
+        async function viewTheftDetails(reportId) {
+            try {
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'stolen_bikes',
+                        id: reportId
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.result.read.length > 0) {
+                    const report = result.result.read[0];
+                    
+                    // Get bike details
+                    const bikeResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            appSlug: APP_SLUG,
+                            action: 'read',
+                            collection: 'bikes',
+                            id: report.bikeId
+                        })
+                    });
+                    
+                    const bikeResult = await bikeResponse.json();
+                    if (bikeResult.success && bikeResult.result.read.length > 0) {
+                        const bike = bikeResult.result.read[0];
+                        
+                        alert(`
+Case Reference: ${report._id.substring(0, 8).toUpperCase()}
+Bike: ${bike.brand} ${bike.model} (${bike.color})
+MPN: ${bike.mpn}
+Reported by: ${report.reportedBy}
+Date of theft: ${formatDate(report.theftDate)} at ${report.theftTime || 'Unknown time'}
+Location: ${report.location}
+
+Description of incident:
+${report.description}
+
+Current status: ${formatInvestigationStatus(report.status)}
+${report.notes ? '\nInvestigation notes:\n' + report.notes : ''}
+                        `);
+                    }
+                }
+            } catch (error) {
+                console.error('Error viewing theft details:', error);
+                alert('Failed to load case details. Please try again.');
+            }
+        }
+        
+        // Show form to update investigation status
+        async function showUpdateStatusForm(bikeId, reportId, currentStatus) {
+            try {
+                // Get bike details
+                const bikeResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'bikes',
+                        id: bikeId
+                    })
+                });
+                
+                // Get theft report details
+                const reportResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer JkZ3lPpFEGej71wuUZIHIw7mPt23',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: APP_SLUG,
+                        action: 'read',
+                        collection: 'stolen_bikes',
+                        id: reportId
+                    })
+                });
+                
+                const bikeResult = await bikeResponse.json();
+                const reportResult = await reportResponse.json();
+                
+                if (bikeResult.success && reportResult.success) {
+                    const bike = bikeResult.result.read[0];
+                    const report = reportResult.result.read[0];
+                    
+                    document.getElementById('update-bike-id').value = bikeId;
+                    document.getElementById('update-bike-details').innerHTML = `
+                        <div class="grid grid-cols-1 gap-2">
+                            <h3 class="text-lg font-bold">${bike.brand} ${bike.model}</h3>
+                            <p><span class="font-bold">MPN:</span> ${bike.mpn}</p>
+                            <p><span class="font-bold">Color:</span> ${bike.color}</p>
+                            <p><span class="font-bold">Reported by:</span> ${report.reportedBy}</p>
+                            <p><span class="font-bold">Theft Date:</span> ${formatDate(report.theftDate)}</p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('current-status').innerHTML = formatInvestigationStatus(report.status);
+                    document.getElementById('current-status').className = `p-3 neu-box ${getInvestigationStatusColor(report.status)}`;
+                    document.getElementById('new-status').value = report.status;
+                    document.getElementById('investigation-notes').value = report.notes || '';
+                    
+                    document.getElementById('police-dashboard').classList.add('hidden');
+                    document.getElementById('update-status-dialog').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error showing update form:', error);
+                alert('Failed to load update form. Please try again.');
+            }
+        }
+        
+        // Helper function to format dates
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown';
+            const date = new Date(dateString);
+            return isNaN(date.getTime()) 
+                ? dateString 
+                : date.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+        }
+        
+        // Get color class for investigation status
+        function getInvestigationStatusColor(status) {
+            switch(status) {
+                case 'reported': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+                case 'investigating': return 'bg-blue-100 text-blue-800 border border-blue-200';
+                case 'leads': return 'bg-indigo-100 text-indigo-800 border border-indigo-200';
+                case 'identified': return 'bg-purple-100 text-purple-800 border border-purple-200';
+                case 'recovered': return 'bg-green-100 text-green-800 border border-green-200';
+                case 'closed': return 'bg-gray-100 text-gray-800 border border-gray-200';
+                default: return 'bg-gray-100 text-gray-800 border border-gray-200';
+            }
+        }
+        
+        // Format investigation status for display
+        function formatInvestigationStatus(status) {
+            switch(status) {
+                case 'reported': return 'Reported';
+                case 'investigating': return 'Under Investigation';
+                case 'leads': return 'Following Leads';
+                case 'identified': return 'Suspect Identified';
+                case 'recovered': return 'Bicycle Recovered';
+                case 'closed': return 'Case Closed';
+                default: return status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+        
+        // Determine time frame for a date (week, month, year)
+        function determineTimeFrame(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            
+            // Check if within the last week
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(now.getDate() - 7);
+            if (date >= oneWeekAgo) return 'week';
+            
+            // Check if within the last month
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(now.getMonth() - 1);
+            if (date >= oneMonthAgo) return 'month';
+            
+            // Check if within the last year
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(now.getFullYear() - 1);
+            if (date >= oneYearAgo) return 'year';
+            
+            return 'older';
+        }
+
+        // Logout Function
+        function logout() {
+            currentUser = null;
+            userBikes = [];
+            isAdmin = false;
+            
+            document.getElementById('nav-buttons').innerHTML = `
+                <button onclick="showLoginForm()" class="px-4 py-2 bg-policeyellow text-black neu-button">Login</button>
+                <button onclick="showRegisterForm()" class="px-4 py-2 bg-white text-policeblue neu-button">Register</button>
+            `;
+            
+            document.getElementById('bike-registration').classList.add('hidden');
+            document.getElementById('police-dashboard').classList.add('hidden');
+            document.getElementById('public-dashboard').classList.add('hidden');
+            document.getElementById('auth-forms').classList.add('hidden');
+            document.getElementById('welcome-section').classList.remove('hidden');
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
